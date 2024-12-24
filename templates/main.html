@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Are You Okay?</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="{{url_for('static', filename='vendor/fonts/boxicons.css')}}"/>
+
+    <!-- Original CSS -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css2')}}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/core.css') }}" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/demo.css') }}" />
+    
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/libs/apex-charts/apex-charts.css') }}" />    
+
+    <!-- Helpers -->
+    <script src="{{ url_for('static', filename='vendor/js/helpers.js') }}"></script>
+
+    <!-- Template customizer & Theme config files -->
+    <!-- Config: Mandatory theme config file containing global vars & default theme options. Set your preferred theme option in this file. -->
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Mental Health</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> 
+                <span class="navbar-toggler-icon"></span> 
+            </button>
+        </div>
+    </nav>
+        
+    <!-- greeting card -->
+    <div class="container-xxl mt-4">
+        <div class="row justify-content-center align-items-center">
+            <div class="col col-md-10">
+                <div class="card">
+                    <div class="d-flex align-items-end row">
+                        <div class="col-sm-7">
+                            <div class="card-body">
+                                <h2 class="card-title text-primary"><strong>Mental Disorder Detector, <br> try it for
+                                        free 🎉</strong>
+                                </h2>
+                                <p class="mb-4">
+                                    you can choose if you want to input a text to be analized or CSV. File to analyzed
+                                    <br> try it yourself!!
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-5 text-center text-sm-left">
+                            <div class="card-body pb-0 px-0 px-md-4">
+                                <img src="{{url_for('static', filename='img/illustrations/man-with-laptop-light.png')}}" height="180" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {%if request.path != '/result' %}
+    <!-- input card -->
+    <div class="container-xxl mt-4">
+        <div class="row justify-content-center align-items-center">
+            <div class="col col-md-10">
+                <div class="nav-align-top mb-4">
+                    <ul class="nav nav-pills mb-3 nav-fill" role="tablist">
+                        <li class="nav-item">
+                            <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+                                data-bs-target="#navs-pills-justified-home" aria-controls="navs-pills-justified-home"
+                                aria-selected="true">
+                                <i class='bx bx-text'></i> Using Text
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                                data-bs-target="#navs-pills-justified-profile"
+                                aria-controls="navs-pills-justified-profile" aria-selected="false">
+                                <i class='bx bx-file-blank'></i> Using CSV. File
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="navs-pills-justified-home" role="tabpanel">
+                            <div class="align-items-center justify-content-center text-center">
+                                <p class="display-5 mb-0 py-2">Input a text to analized</p>
+
+                                <form action="/result" method="POST" onsubmit="return validateTextInput()">
+                                    <div class="row m-0 align-items-center justify-content-center">
+                                        <div class="col col-md-8 p-1">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Recipient's statement" aria-label="Recipient's username" aria-describedby="button-addon2" name="text" id="textInput">
+                                                <button class="btn btn-outline-primary" type="submit" id="button-addon2">Calculate</button>
+                                            </div>
+                                            <div class="col col-md-auto p-1">
+                                                <input id="termsCheckbox" class="form-check-input" type="checkbox" required name="single">
+                                                <label class="form-check-label" for="termsCheckbox"> I agree with the <a href="#">Terms and agreement</a></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                
+                                <p class="text-muted mb-0 mt-4"> The percentage is not a benchmark of user
+                                    mental health.
+                                    <a href="https://youtu.be/BBJa32lCaaY?si=JMFzrixupZPy2wv1" target="_blank" style="text-decoration: underline;">
+                                        Learn More.
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="navs-pills-justified-profile" role="tabpanel">
+                            <div class="align-items-center justify-content-center text-center">
+                                <p class="display-5 mb-0 py-2">Input a CSV file to analized</p>
+
+                                <form action="/result" method="POST" enctype="multipart/form-data">
+                                    <div class="row m-0 align-items-center justify-content-center">
+                                        <div class="col col-md-8 p-1">
+                                            <div class="input-group">
+                                                <input type="file" class="form-control" name="csv" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                                <button class="btn btn-outline-primary" type="submit" id="button-addon2">Calculate</button>
+                                            </div>
+                                            <div class="col col-md-auto p-1">
+                                                <input id="termsCheckbox" class="form-check-input" type="checkbox" name="csv_file" required>
+                                                <label class="form-check-label" for="termsCheckbox"> I agree with the <a href="#">Terms and agreement</a> </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <p class="text-muted mb-0 mt-4"> The percentage is not a benchmark of user
+                                    mental health.
+                                    <a href="https://youtu.be/BBJa32lCaaY?si=JMFzrixupZPy2wv1" target="_blank" style="text-decoration: underline;">
+                                        Learn More.
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {%if request.path == '/result' %}
+    <!-- result card1 -->
+    <div class="container-xxl my-4">
+        <div class="row justify-content-center align-items-center">
+            <div class="col col-lg-10">
+                <div class="card">
+                    <div class="row">
+                        <div class="col col-lg-12">
+                            <div class="card-body text-center p-4">
+                                <h1>Result:</h1>
+                                {% if Positive > Negative %}
+                                <h1 class="text-success">
+                                    POSITIVE
+                                </h1>
+                                {% elif Negative > Positive %}
+                                <h1 class="text-danger">
+                                    NEGATIVE
+                                </h1>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-xxl mb-4">
+        <div class="row justify-content-center align-items-center">
+            <div class="col col-md-10">
+                <div class="card">
+                    <div class="row row-bordered">
+                        <div class="col col-sm-3">
+                            <div class="card-body text-center p-4">
+                                <p>Result Precentage</p>
+                                <div id="growthChart"></div>
+                                <div class="text-center fw-semibold pt-3 mb-2">
+                                    {{ growth_data }}% 
+                                    {% if Negative > Positive %}
+                                        {{ 'Negative' }}
+                                    {% else %}
+                                        {{ 'Positive' }}
+                                    {% endif %}
+                                </div>                                
+
+                                <div class="row">
+                                    <div class="col p-0">
+                                        <div class="me-2">
+                                            <span class="badge bg-label-danger p-2"><i class='bx bx-dislike'></i></span>
+                                        </div>
+                                        <div class="">
+                                            <small>Negative</small>
+                                            <h6 class="mb-0">{{Negative}}%</h6>
+                                        </div>
+                                    </div>
+                                    <div class="col p-0">
+                                        <div class="me-2">
+                                            <span class="badge bg-label-success p-2"><i class='bx bx-like'></i></span>
+                                        </div>
+                                        <div class="">
+                                            <small>Positive</small>
+                                            <h6 class="mb-0">{{Positive}}%</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <h5 class="card-header p-4 ps-2">Striped rows</h5>
+                            <div class="table-responsive text-nowrap">
+                                <table id="mentalHealthTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Statement</th>
+                                            <th>Prediction</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-border-bottom-0">
+                                        {% for statement, prediction in results %}
+                                        <tr>
+                                            <td>{{ statement }}</td>
+                                            {% if prediction == 'Normal' %}
+                                                <td><span class="badge bg-label-success me-1">{{ prediction }}</span></td>
+                                            {% elif prediction == 'Anxiety' %}
+                                                <td><span class="badge bg-label-warning me-1">{{ prediction }}</span></td>
+                                            {% elif prediction == 'Bipolar' %}
+                                                <td><span class="badge bg-label-info me-1">{{ prediction }}</span></td>
+                                            {% elif prediction == 'Depression' %}
+                                                <td><span class="badge bg-label-primary me-1">{{ prediction }}</span></td>
+                                            {% elif prediction == 'Personality Disorder' %}
+                                                <td><span class="badge bg-label-dark me-1">{{ prediction }}</span></td>
+                                            {% elif prediction == 'Stress' %}
+                                                <td><span class="badge bg-label-danger me-1">{{ prediction }}</span></td>
+                                            {% elif prediction == 'Suicidal' %}
+                                                <td><span class="badge bg-label-danger me-1">{{ prediction }}</span></td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table> 
+                                
+                                  <!-- Pagination -->
+                                <nav aria-label="Page navigation" class="pt-2">
+                                    <ul class="pagination justify-content-center">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                    </li>
+                                    <li class="page-item active" aria-current="page">
+                                        <a class="page-link" href="#">1</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">2</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">3</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                    </ul>
+                                </nav>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- result card2 -->
+    {% if type == 'file' %}
+    <div class="container-xxl mb-4">
+        <div class="row justify-content-center align-items-center">
+            <div class="col col-lg-10">
+                <div class="row ">
+                    <div class="col col-md-4">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                                <div class="card-title mb-0">
+                                    <h5 class="m-0 me-2">All Results</h5>
+                                    <small class="text-muted">these are the results of your input</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="row justify-content-center align-items-center mb-3">
+                                    <div id="orderStatisticsChart"></div>
+                                </div>
+
+                                <ul class="p-0 m-0">
+                                    {% for label, count in prediction_counts.items() %}
+                                    <li class="d-flex mb-4 pb-1">
+                                        <div class="avatar flex-shrink-0 me-3">
+                                            {% if label == 'Normal' %}
+                                                <span class="avatar-initial rounded bg-label-success"><i class='bx bx-happy-beaming'></i></span>
+                                            {% elif label == 'Anxiety' %}
+                                                <span class="avatar-initial rounded bg-label-warning"><i class='bx bx-sad'></i></span>
+                                            {% elif label == 'Bipolar' %}
+                                                <span class="avatar-initial rounded bg-label-info"><i class='bx bx-sad'></i></span>
+                                            {% elif label == 'Depression' %}
+                                                <span class="avatar-initial rounded bg-label-primary"><i class='bx bx-sad'></i></span>
+                                            {% elif label == 'Personality Disorder' %}
+                                                <span class="avatar-initial rounded bg-label-dark"><i class='bx bx-sad'></i></span>
+                                            {% elif label == 'Stress' %}
+                                                <span class="avatar-initial rounded bg-label-danger"><i class='bx bx-sad'></i></span>
+                                            {% elif label == 'Suicidal' %}
+                                                <span class="avatar-initial rounded bg-label-danger"><i class='bx bx-sad'></i></span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                            <div class="me-2">
+                                                <h6 class="mb-0">{{ label }}</h6>
+                                            </div>
+                                            <div class="user-progress">
+                                                <small class="fw-semibold">{{ (count / prediction_counts.values()|sum * 100) | round(2) }}%</small>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% endfor %}                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                                <div class="card-title mb-0">
+                                    <h5 class="m-0 me-2">Most Frequent Word Used</h5>
+                                    <small class="text-muted">these are the results of your statement</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <img src="data:image/png;base64,{{ wordcloud_image }}" alt="Word Cloud" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='vendor/js/menu.js') }}"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="{{ url_for('static', filename='vendor/libs/apex-charts/apexcharts.js') }}"></script>
+
+    <!-- Main JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Page JS -->
+    <!-- Ini Berisikan data yang perlu diubah -->
+    <script src="{{ url_for('static', filename='js/dashboards-analytics.js') }}"></script>
+    <!-- <script src="../static/assets/js/dashboards-analytics.js"></script> -->
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+
+    <script>
+        const growthData = {{ growth_data }};
+        const growthChartEl = document.querySelector('#growthChart');
+        const growthChartOptions = {
+            series: [growthData],
+            labels: ['Percentage'],
+            chart: {
+                height: 240,
+                type: 'radialBar'
+            },
+            plotOptions: {
+                radialBar: {
+                    size: 150,
+                    offsetY: 10,
+                    startAngle: -150,
+                    endAngle: 150,
+                    hollow: {
+                        size: '55%'
+                    },
+                    track: {
+                        background: '#f5f5f5',
+                        strokeWidth: '100%'
+                    },
+                    dataLabels: {
+                        name: {
+                            offsetY: 15,
+                            color: '#333',
+                            fontSize: '15px',
+                            fontWeight: '600',
+                            fontFamily: 'Public Sans'
+                        },
+                        value: {
+                            offsetY: -25,
+                            color: '#333',
+                            fontSize: '22px',
+                            fontWeight: '500',
+                            fontFamily: 'Public Sans'
+                        }
+                    }
+                }
+            },
+            colors: ['#7367F0'],
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    shadeIntensity: 0.5,
+                    gradientToColors: ['#7367F0'],
+                    inverseColors: true,
+                    opacityFrom: 1,
+                    opacityTo: 0.6,
+                    stops: [30, 70, 100]
+                }
+            },
+            stroke: {
+                dashArray: 5
+            },
+            grid: {
+                padding: {
+                    top: -35,
+                    bottom: -10
+                }
+            }
+        };
+        if (growthChartEl) {
+            const growthChart = new ApexCharts(growthChartEl, growthChartOptions);
+            growthChart.render();
+        }
+    </script> 
+    
+    <script>
+          const prediction = {{prediction_counts}}
+          const chartOrderStatistics = document.querySelector('#orderStatisticsChart'),
+            orderChartConfig = {
+            chart: {
+                height: 165,
+                width: 130,
+                type: 'donut'
+            },
+
+            labels: ['Anxiety', 'Bipolar', 'Depression', 'Normal', 'Personality Disorder', 'Stress', 'Suicidal'],
+            series: prediction,
+            colors: [config.colors.primary, config.colors.secondary, config.colors.info, config.colors.success],
+            stroke: {
+                width: 5,
+                colors: cardColor
+            },
+            dataLabels: {
+                enabled: false,
+                formatter: function (val, opt) {
+                return parseInt(val) + '%';
+                }
+            },
+            legend: {
+                show: false
+            },
+            grid: {
+                padding: {
+                top: 0,
+                bottom: 0,
+                right: 15
+                }
+            },
+            plotOptions: {
+                pie: {
+                donut: {
+                    size: '75%',
+                    labels: {
+                    show: true,
+                    value: {
+                        fontSize: '1.5rem',
+                        fontFamily: 'Public Sans',
+                        color: headingColor,
+                        offsetY: -15,
+                        formatter: function (val) {
+                        return parseInt(val) + '%';
+                        }
+                    },
+                    name: {
+                        offsetY: 20,
+                        fontFamily: 'Public Sans'
+                    },
+                    total: {
+                        show: true,
+                        fontSize: '0.8125rem',
+                        color: axisColor,
+                        label: 'Weekly',
+                        formatter: function (w) {
+                        return '38%';
+                        }
+                    }
+                    }
+                }
+                }
+            }
+            };
+        if (typeof chartOrderStatistics !== undefined && chartOrderStatistics !== null) {
+            const statisticsChart = new ApexCharts(chartOrderStatistics, orderChartConfig);
+            statisticsChart.render();
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#mentalHealthTable').DataTable({
+                "paging": true, // Enable pagination
+                "lengthChange": true, // Allow user to change page size
+                "searching": true, // Enable search functionality
+                "ordering": true, // Enable column sorting
+                "info": true, // Show table information
+                "autoWidth": false, // Disable auto column width adjustment
+                "responsive": true // Make table responsive
+            });
+        });
+    </script>
+
+
+
+<script>
+    const rowsPerPage = 5;
+    let currentPage = 1;
+  
+    // Function to update pagination buttons
+    function updatePagination() {
+      const totalRows = document.querySelectorAll("table tbody tr").length;
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+  
+      // Calculate the range of page numbers to show
+      const startPage = Math.max(1, currentPage - 1);
+      const endPage = Math.min(totalPages, currentPage + 1);
+  
+      // Get the pagination container and clear existing page items
+      const pagination = document.querySelector(".pagination");
+      pagination.innerHTML = `
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+          <a class="page-link" href="#" aria-label="Previous">Previous</a>
+        </li>
+      `;
+  
+      // Add page number items
+      for (let i = startPage; i <= endPage; i++) {
+        pagination.innerHTML += `
+          <li class="page-item ${currentPage === i ? 'active' : ''}">
+            <a class="page-link" href="#">${i}</a>
+          </li>
+        `;
+      }
+  
+      // Add Next button
+      pagination.innerHTML += `
+        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+          <a class="page-link" href="#" aria-label="Next">Next</a>
+        </li>
+      `;
+  
+      // Add event listeners to page numbers
+      document.querySelectorAll(".page-link").forEach(button => {
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (button.textContent === "Previous" && currentPage > 1) {
+            currentPage--;
+          } else if (button.textContent === "Next" && currentPage < totalPages) {
+            currentPage++;
+          } else if (!isNaN(button.textContent)) {
+            currentPage = parseInt(button.textContent);
+          }
+  
+          // Update pagination and table rows
+          updatePagination();
+          paginateTable();
+        });
+      });
+    }
+  
+    // Function to paginate table rows
+    function paginateTable() {
+      const rows = document.querySelectorAll("table tbody tr");
+      const totalRows = rows.length;
+      const startIndex = (currentPage - 1) * rowsPerPage;
+      const endIndex = startIndex + rowsPerPage;
+  
+      rows.forEach((row, index) => {
+        row.style.display = (index >= startIndex && index < endIndex) ? "" : "none";
+      });
+    }
+  
+    // Initialize pagination
+    updatePagination();
+    paginateTable();
+</script>
+
+<script>
+    function validateTextInput() {
+        const textInput = document.getElementById('textInput').value;
+        const regex = /^[A-Za-z\s]+$/;  // Only allows letters and spaces
+        
+        if (!regex.test(textInput)) {
+            alert("Please enter only letters.");
+            return false;  // Prevent form submission
+        }
+        return true;  // Allow form submission
+    }
+</script>
+  
+  
+  
+</body>
+
+</html>
